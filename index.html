@@ -146,9 +146,11 @@ function render() {
   tabla.innerHTML = "";
 
   let total = 0;
+  let totalBonos = 0;
 
   ventas.forEach((v, i) => {
     total += v.monto;
+    totalBonos += v.bono;
 
     const fila = document.createElement("tr");
     fila.innerHTML = `
@@ -160,4 +162,16 @@ function render() {
     tabla.appendChild(fila);
   });
 
-  document.getElementById("t
+  document.getElementById("total").textContent = total;
+}
+
+function resetear() {
+  if (confirm("¿Seguro que quieres borrar todo el turno?")) {
+    ventas = [];
+    localStorage.removeItem("ventasGalaxy");
+    render();
+  }
+}
+
+function mostrarFecha() {
+  const ah
