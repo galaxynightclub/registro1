@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Galaxy Night Club | Registro de Ventas</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at top, #2b1055, #000);
+  color: white;
+}
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+  color: #c77dff;
+}
+.card {
+  background: rgba(255,255,255,0.08);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(140,0,255,0.3);
+}
+input, select, button {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+}
+input, select {
+  width: 100%;
+  margin-bottom: 10px;
+}
+button {
+  background: linear-gradient(90deg, #7b2cbf, #5390d9);
+  color: white;
+  cursor: pointer;
+}
+button:hover {
+  opacity: 0.9;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  text-align: center;
+}
+th {
+  color: #ffd6ff;
+}
+.total {
+  font-size: 20px;
+  margin-top: 10px;
+  text-align: right;
+  color: #80ffdb;
+}
+.reset {
+  background: #ff4d6d;
+  margin-top: 10px;
+}
+.bono {
+  color: #ffd166;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🌌 Galaxy Night Club<br>Registro de Ventas</h1>
+<p style="text-align:center;" id="fecha"></p>
+
+<div class="card">
+  <h2>👤 Datos del trabajador</h2>
+  <input type="text" id="trabajador" placeholder="Nombre del trabajador">
+</div>
+
+<div class="card">
+  <h2>🧾 Registrar venta</h2>
+  <input type="number" id="monto" placeholder="Monto vendido ($)">
+  <button type="button" onclick="agregarVenta()">Agregar venta</button>
+</div>
+
+<div class="card">
+  <h2>📊 Ventas del turno</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Trabajador</th>
+        <th>Monto</th>
+        <th>Bono</th>
+      </tr>
+    </thead>
+    <tbody id="tablaVentas"></tbody>
+  </table>
+
+  <div class="total">Total vendido: $<span id="total">0</span></div>
+
+  <button class="reset" onclick="resetear()">Resetear turno</button>
+</div>
+
+</div>
+
+<script>
+let ventas = JSON.parse(localStorage.getItem("ventasGalaxy")) || [];
+let contador = ventas.length;
+
+function calcularBono(monto) {
+  if (monto >= 20000) return monto * 0.20;
+  if (monto >= 10000) return monto * 0.15;
+  return monto * 0.10;
+}
+
+function agregarVenta() {
+  const nombre = document.getElementById("trabajador").value.trim();
+  const monto = parseInt(document.getElementById("monto").value);
+
+  if (!nombre || !monto || monto <= 0) {
+    alert("Completa nombre y monto válido");
+    return;
+  }
+
+  const bono = calcularBono(monto);
+
+  ventas.push({ nombre, monto, bono });
+  localStorage.setItem("ventasGalaxy", JSON.stringify(ventas));
+
+  document.getElementById("monto").value = "";
+  render();
+}
+
+function render() {
+  const tabla = document.getElementById("tablaVentas");
+  tabla.innerHTML = "";
+
+  let total = 0;
+
+  ventas.forEach((v, i) => {
+    total += v.monto;
+
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${i + 1}</td>
+      <td>${v.nombre}</td>
+      <td>$${v.monto}</td>
+      <td>$${Math.round(v.bono)}</td>
+    `;
+    tabla.appendChild(fila);
+  });
+
+  document.getElementById("t
